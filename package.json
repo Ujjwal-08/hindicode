@@ -1,12 +1,42 @@
 {
   "name": "hindicode",
   "version": "1.0.3",
+  "description": "Run JavaScript with Hindi keywords",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "hindi",
+    "javascript",
+    "transpiler",
+    "compiler",
+    "hindi-js",
+    "programming",
+    "education"
+  ],
+  "author": "Ujjwal-08",
   "license": "ISC",
-  "description": "Run JavaScript with Hindi keywords"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ujjwal-08/hindicode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ujjwal-08/hindicode/issues"
+  },
+  "homepage": "https://github.com/Ujjwal-08/hindicode#readme",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "semantic-release": "^25.0.3"
+  }
 }
