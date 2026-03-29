@@ -2,6 +2,13 @@
 
 Hindicode is evolving from a runtime keyword translator into a Hindi-first JavaScript compiler pipeline.
 
+### 💖 Donate
+
+You can support the project here:
+
+- **Patreon:** https://www.patreon.com/cw/BABU_ISHU  
+- **PayPal:** https://www.paypal.com/ncp/payment/SECBQ62TRZZ6Y
+- 
 ## What Hindicode Supports Today
 
 - `.hindi.js` runtime execution in Node
