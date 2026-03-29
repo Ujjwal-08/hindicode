@@ -1,23 +1,37 @@
-// runner.js
+// runner.js — Runs all hindicode test files
 require('./index.js');
-const path = require('path');
-const fs = require('fs');
+
+const testFiles = [
+    'tests/01_basics.hindi.js',
+    'tests/02_control_flow.hindi.js',
+    'tests/03_functions.hindi.js',
+    'tests/04_arrays.hindi.js',
+    'tests/05_objects_classes.hindi.js',
+    'tests/06_async.hindi.js',
+    'tests/07_error_handling.hindi.js',
+    'tests/08_math_string.hindi.js',
+    'tests/09_protection.hindi.js',
+];
+
+let passed = 0;
+let failed = 0;
 
 console.log("🚀 Running hindicode tests...\n");
 
-const testFiles = [
-    'basic.hindi.js',
-    'logic.hindi.js',
-    'strings_comments.hindi.js',
-    'advanced.hindi.js'
-];
-
 testFiles.forEach(file => {
-    console.log(`--- Testing ${file} ---`);
+    console.log(`\n── Testing ${file} ─────────────────`);
     try {
-        require(`./tests/${file}`);
-        console.log(`✅ ${file} passed\n`);
+        require(`./${file}`);
+        console.log(`✅ ${file} PASSED`);
+        passed++;
     } catch (err) {
-        console.error(`❌ ${file} failed:`, err);
+        console.error(`❌ ${file} FAILED:`, err.message);
+        failed++;
     }
 });
+
+setTimeout(() => {
+    console.log(`\n────────────────────────────────────`);
+    console.log(`✅ Passed: ${passed}  ❌ Failed: ${failed}`);
+    console.log(`────────────────────────────────────`);
+}, 500);
