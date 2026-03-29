@@ -91,54 +91,49 @@ const hindiToJS = {
     "NaN": "NaN",
     "कोड": "code",
     "संदेश": "message",
+    "असांयकालिक": "async",
+    "त्रुटि": "Error",
 };
-// // Hindi to JavaScript keyword mapping
-// const hindiToJS = {
-//     "अगर": "if",
-//     "अन्यथा": "else",
-//     "दिखाओ": "console.log",
-//     "कार्य": "function",
-//     "लौटाओ": "return",
-//     "चलाओ": "for",
-//     "जबतक": "while",
-//     "नया": "let",
-//     "स्थिर": "const",
-//     "परिभाषा": "var"
-// };
+
 function translateHindiJS(code) {
-    // स्ट्रिंग्स को प्रोटेक्ट करने के लिए, पहले उन्हें अलग कर लें
-    let stringLiterals = [];
-    code = code.replace(/(["'`])((?:\\\1|.)*?)\1/g, (match) => {
-        stringLiterals.push(match); // स्ट्रिंग सेव कर लो
-        return `___STR${stringLiterals.length - 1}___`; // प्लेसहोल्डर डाल दो
-    });
+    const sortedKeywords = Object.keys(hindiToJS).sort((a, b) => b.length - a.length);
 
-    // अब सिर्फ जावास्क्रिप्ट केवर्ड्स को ही ट्रांसलेट करो
-    Object.entries(hindiToJS).forEach(([hindi, js]) => {
-        if (hindi === "नाम") {
-            // ✅ 'this.नाम' और 'let नाम' को नहीं बदलना
-            code = code.replace(/([^.\w])नाम([^.\w])/g, `$1name$2`);
-        }  else {
-            const regex = new RegExp(`(?<![\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w])${hindi}(?![\\u00BF-\\u1FFF\\u2C00-\\uD7FF\\w])`, "g");
-            code = code.replace(regex, js);
+    const parts = [
+        /(?<BLOCK>\/\*[\s\S]*?\*\/)/.source,
+        /(?<LINE>\/\/.*)/.source,
+        /(?<STRING_DBL>"(?:[^"\\]|\\.)*")/.source,
+        /(?<STRING_SGL>'(?:[^'\\]|\\.)*')/.source,
+        /(?<BACKTICK>`[\s\S]*?`)/.source,
+        /(?<REGEX>\/(?![*\/])(?:[^\/\\\n]|\\.)*?\/[gimuy]*)/.source,
+        `(?<KEYWORD>(?<![\\u0900-\\u097F])(?:${sortedKeywords.join("|")})(?![\\u0900-\\u097F]))`
+    ];
+
+    const masterRegex = new RegExp(parts.join("|"), "g");
+
+    return code.replace(masterRegex, (...args) => {
+        const groups = args[args.length - 1];
+        const { BACKTICK, KEYWORD } = groups;
+
+        if (KEYWORD && hindiToJS[KEYWORD]) {
+            return hindiToJS[KEYWORD];
         }
+
+        if (BACKTICK) {
+            return BACKTICK.replace(/\${([\s\S]*?)}/g, (m, inner) => {
+                return `${"$"}{${translateHindiJS(inner)}}`;
+            });
+        }
+
+        return args[0];
     });
-
-    // अब स्ट्रिंग्स को वापस लाओ
-    code = code.replace(/___STR(\d+)___/g, (_, index) => stringLiterals[parseInt(index)]);
-console.log(code);
-    return code;
 }
-
 
 // Custom require hook for `.hindi.js` files
 require.extensions[".hindi.js"] = function (module, filename) {
     try {
         let content = fs.readFileSync(filename, "utf8").trim();
-      
-
-        // Translate Hindi to JavaScript
-        content = translateHindiJS(content); // Assign the returned value back to 'content'
+        content = translateHindiJS(content);
+        module._compile(content, filename);
      
 
         // Run translated JavaScript code
@@ -147,3 +142,5 @@ require.extensions[".hindi.js"] = function (module, filename) {
         console.error("❌ Hindi Transpiler Error:", error);
     }
 };
+
+module.exports = { translateHindiJS };
