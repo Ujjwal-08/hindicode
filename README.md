@@ -62,18 +62,36 @@ require('./your-file.hindi.js');
 
 ---
 
-## 📖 Keyword Mapping (कीवर्ड्स)
+## 🖥️ Windows Console Setup (Fix Hindi Visibility)
+If you are using **PowerShell** or **CMD** and cannot see Hindi characters correctly, run this command in your terminal:
+
+```powershell
+# For PowerShell
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+chcp 65001
+```
+
+**Note**: Ensure your terminal font is set to a Unicode-compatible font like **Cascadia Code**, **Consolas**, or **MS Gothic**.
+
+---
+
+## 📖 Keyword Mapping (प्रमुख कीवर्ड्स)
 | Hindi | JavaScript | Hindi | JavaScript |
 | :--- | :--- | :--- | :--- |
-| अगर | if | अन्य | else |
-| दिखाओ | console.log | कार्य | function |
-| लौटाओ | return | चलाओ | for |
-| जबतक | while | नया | let |
-| स्थिर | const | सही | true |
-| गलत | false | असांयकालिक | async |
-| प्रतीक्षा | await | त्रुटि | Error |
+| **अगर** | if | **वरना** / **नहीं तो** | else |
+| **नया** | let | **स्थिर** | const |
+| **कार्य** | function | **लौटाओ** | return |
+| **दिखाओ** | console.log | **गलती** | console.error |
+| **जबतक** | while | **केलिए** / **हरएक** | for |
+| **असिंक** | async | **इंतज़ार** | await |
+| **सच** | true | **झूठ** | false |
+| **खाली** | null | **अपरिभाषित** | undefined |
+| **कोशिश** | try | **पकड़ो** | catch |
+| **वर्ग** | class | **विस्तार** | extends |
+| **आयात** | import | **निर्यात** | export |
+| **मांगो** | require | **मॉड्यूल** | module |
 
-*(Check `index.js` for the full dictionary of over 90+ terms!)*
+*(Check `index.js` for the full dictionary of **160+ terms**, including Math, JSON, and Node.js APIs!)*
 
 ---
 
