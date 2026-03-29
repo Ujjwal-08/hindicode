@@ -115,6 +115,7 @@ const hindiToJS = {
     "रखो": "set",
     "साफ़": "clear",
     "आकार": "size",
+    "डालो": "add",
 
     // ── Promise ───────────────────────────────────────
     "फिर": "then",
@@ -149,14 +150,19 @@ const hindiToJS = {
     // ── Built-ins ─────────────────────────────────────
     "ऑब्जेक्ट": "Object",
     "ऐरे": "Array",
+    "सेट": "Set",
+    "स्ट्रिंग": "String",
     "टेक्स्ट": "String",
     "नंबर": "Number",
     "बूलियन": "Boolean",
+    "डेट": "Date",
     "तारीख": "Date",
     "गणित": "Math",
     "जेसन": "JSON",
     "रेगएक्स": "RegExp",
     "अनंत": "Infinity",
+    "त्रुटि": "Error",
+    "प्रॉमिस": "Promise",
 
     // ── Math Shortcuts ────────────────────────────────
     "गोलाई": "Math.round",
@@ -195,7 +201,7 @@ function translateHindiJS(code) {
         /(?<STRING_SGL>'(?:[^'\\]|\\.)*')/.source,
         /(?<BACKTICK>`[\s\S]*?`)/.source,
         /(?<REGEX>\/(?![*\/])(?:[^\/\\\n]|\\.)*?\/[gimuy]*)/.source,
-        `(?<KEYWORD>(?<![\\u0900-\\u097F])(?:${sortedKeywords.join("|")})(?![\\u0900-\\u097F]))`
+        `(?<KEYWORD>(?<![\\u0900-\\u097F\\w$])(?:${sortedKeywords.join("|")})(?![\\u0900-\\u097F\\w$]))`
     ];
 
     const masterRegex = new RegExp(parts.join("|"), "g");
@@ -226,6 +232,7 @@ require.extensions[".hindi.js"] = function (module, filename) {
         module._compile(content, filename);
     } catch (error) {
         console.error("❌ Hindi Transpiler Error:", error);
+        throw error; // Re-throw to allow runners to detect failure
     }
 };
 

@@ -11,6 +11,10 @@ const testFiles = [
     'tests/07_error_handling.hindi.js',
     'tests/08_math_string.hindi.js',
     'tests/09_protection.hindi.js',
+    'tests/10_destructuring_spread.hindi.js',
+    'tests/11_collections.hindi.js',
+    'tests/12_node_core.hindi.js',
+    'tests/13_logic_operators.hindi.js',
 ];
 
 let passed = 0;
