@@ -4,8 +4,11 @@
   "description": "Run JavaScript with Hindi keywords",
   "main": "index.js",
   "types": "index.d.ts",
+  "bin": {
+    "hindicode": "./bin/hindicode.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tests/tokenizer_runner.js && node tests/parser_runner.js && node tests/public_api_runner.js && node tests/cli_runner.js && node tests/integration_runner.js && node tests/spec_runner.js && node runner.js"
   },
   "keywords": [
     "hindi",
@@ -27,8 +30,10 @@
   },
   "homepage": "https://github.com/Ujjwal-08/hindicode#readme",
   "files": [
+    "bin",
     "index.js",
     "index.d.ts",
+    "src",
     "README.md",
     "LICENSE"
   ],

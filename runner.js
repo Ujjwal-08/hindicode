@@ -1,41 +1,51 @@
-// runner.js — Runs all hindicode test files
-require('./index.js');
+// runner.js — Runs all numbered hindicode test files
+require("./index.js");
+require("./tests/assert_helper.js"); // Load Hindi assertions globally
 
-const testFiles = [
-    'tests/01_basics.hindi.js',
-    'tests/02_control_flow.hindi.js',
-    'tests/03_functions.hindi.js',
-    'tests/04_arrays.hindi.js',
-    'tests/05_objects_classes.hindi.js',
-    'tests/06_async.hindi.js',
-    'tests/07_error_handling.hindi.js',
-    'tests/08_math_string.hindi.js',
-    'tests/09_protection.hindi.js',
-    'tests/10_destructuring_spread.hindi.js',
-    'tests/11_collections.hindi.js',
-    'tests/12_node_core.hindi.js',
-    'tests/13_logic_operators.hindi.js',
-];
+const fs = require("fs");
+const path = require("path");
+
+const testsDir = path.join(__dirname, "tests");
+const testFiles = fs
+    .readdirSync(testsDir)
+    .filter((file) => /^\d+_.*\.hindi\.js$/.test(file))
+    .sort((a, b) => a.localeCompare(b, "en"))
+    .map((file) => path.posix.join("tests", file));
 
 let passed = 0;
 let failed = 0;
+let failedTests = [];
 
 console.log("🚀 Running hindicode tests...\n");
 
-testFiles.forEach(file => {
-    console.log(`\n── Testing ${file} ─────────────────`);
+testFiles.forEach((file) => {
+    process.stdout.write(`── Testing ${file.padEnd(40)} `);
     try {
         require(`./${file}`);
-        console.log(`✅ ${file} PASSED`);
+        console.log("✅ PASSED");
         passed++;
     } catch (err) {
-        console.error(`❌ ${file} FAILED:`, err.message);
+        console.log("❌ FAILED");
+        console.error(`   Error: ${err.message}`);
         failed++;
+        failedTests.push({ file, error: err.message });
     }
 });
 
 setTimeout(() => {
-    console.log(`\n────────────────────────────────────`);
+    console.log("\n" + "═".repeat(50));
     console.log(`✅ Passed: ${passed}  ❌ Failed: ${failed}`);
-    console.log(`────────────────────────────────────`);
+
+    if (failedTests.length > 0) {
+        console.log("═".repeat(50));
+        console.log("Detailed Failures:");
+        failedTests.forEach((t) => {
+            console.log(`- ${t.file}: ${t.error}`);
+        });
+    }
+    console.log("═".repeat(50));
+
+    if (failed > 0) {
+        process.exit(1);
+    }
 }, 500);

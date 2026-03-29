@@ -1,115 +1,90 @@
-# HindiCode - हिंदी में जावास्क्रिप्ट लिखें! 🚀
-> Write JavaScript in Hindi with Industrial-Grade Robustness.
+# HindiCode - हिंदी में जावास्क्रिप्ट लिखें!
 
----
+Hindicode is evolving from a runtime keyword translator into a Hindi-first JavaScript compiler pipeline.
 
-## 🌍 [HI] परिचय (Introduction)
-**HindiCode** एक आधुनिक NPM पैकेज है जो आपको **हिंदी में जावास्क्रिप्ट** लिखने की सुविधा देता है। यह कोड को रन-टाइम पर पार्स करता है और हिंदी के कीवर्ड्स को जावास्क्रिप्ट में बदल देता है।
+## What Hindicode Supports Today
 
-**HindiCode** is a modern NPM package that lets you **write JavaScript in Hindi**. It transpiles Hindi keywords into JavaScript at runtime, enabling a seamless native coding experience.
+- `.hindi.js` runtime execution in Node
+- `hindicode run`, `hindicode check`, and `hindicode transpile`
+- multi-file CommonJS-style Hindicode programs
+- browser-targeted transpilation experiments
+- structured diagnostics for compile-time syntax failures
 
-### 🔹 Example (उदाहरण)
+## Quick Example
+
 ```javascript
-स्थिर x = 10;
-अगर (x > 5) {
-    दिखाओ("x बड़ा है!");
-} अन्यथा {
-    दिखाओ("x छोटा है!");
+स्थिर नाम = "अर्जुन";
+
+कार्य स्वागत(व्यक्ति) {
+    लौटाओ `नमस्ते ${व्यक्ति}`;
 }
+
+दिखाओ(स्वागत(नाम));
 ```
 
----
+## Install
 
-## 🌟 Features (विशेषताएँ)
-- **Industrial-Grade Protection**: 
-  - **🛡️ Comment Protection**: Keywords inside `//` or `/* */` are never translated.
-  - **🛡️ String Protection**: Your text inside `" "` or `' '` stays exactly as written.
-  - **🛡️ Regex Protection**: Search patterns like `/अगर/g` are preserved perfectly.
-- **Smart Template Literals**: Supports full `${}` interpolation with recursive translation.
-- **Unicode Boundaries**: Professional word boundaries ensure `नम` doesn't break `नमस्ते`.
-- **Zero Configuration**: Just register the hook and run `.hindi.js` files.
-
----
-
-## 🔧 Installation (स्थापना)
-```sh
+```powershell
 npm install hindicode
 ```
 
----
-
-## 🚀 Usage (उपयोग)
-
-### 1. Register the Transpiler
-Add this to your entry point (e.g., `index.js`):
-```javascript
-require('hindicode');
-require('./your-file.hindi.js');
-```
-
-### 2. Write in Hindi (`.hindi.js`)
-```javascript
-// app.hindi.js
-नया नाम = "अर्जुन";
-दिखाओ(`नमस्ते ${नाम}!`);
-
-कार्य जोड़(अ, ब) {
-    लौटाओ अ + ब;
-}
-
-दिखाओ("योग:", जोड़(10, 20));
-```
-
----
-
-## 🖥️ Windows Console Setup (Fix Hindi Visibility)
-If you are using **PowerShell** or **CMD** and cannot see Hindi characters correctly, run this command in your terminal:
+## CLI
 
 ```powershell
-# For PowerShell
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-chcp 65001
+hindicode run app.hindi.js
+hindicode check app.hindi.js
+hindicode transpile app.hindi.js
 ```
 
-**Note**: Ensure your terminal font is set to a Unicode-compatible font like **Cascadia Code**, **Consolas**, or **MS Gothic**.
+## Compiler Direction
 
----
+Phase 1 now includes:
+- keyword inventory module
+- tokenizer
+- parser-strategy layer
+- compiler contract
+- runtime registration module
+- CLI entrypoints
+- parser, CLI, integration, and scenario coverage
 
-## 📖 Keyword Mapping (प्रमुख कीवर्ड्स)
-| Hindi | JavaScript | Hindi | JavaScript |
-| :--- | :--- | :--- | :--- |
-| **अगर** | if | **वरना** / **नहीं तो** | else |
-| **नया** | let | **स्थिर** | const |
-| **कार्य** | function | **लौटाओ** | return |
-| **दिखाओ** | console.log | **गलती** | console.error |
-| **जबतक** | while | **केलिए** / **हरएक** | for |
-| **असिंक** | async | **इंतज़ार** | await |
-| **सच** | true | **झूठ** | false |
-| **खाली** | null | **अपरिभाषित** | undefined |
-| **कोशिश** | try | **पकड़ो** | catch |
-| **वर्ग** | class | **विस्तार** | extends |
-| **आयात** | import | **निर्यात** | export |
-| **मांगो** | require | **मॉड्यूल** | module |
+## Best-Supported Phase 1 Use Cases
 
-*(Check `index.js` for the full dictionary of **160+ terms**, including Math, JSON, and Node.js APIs!)*
+- learning JavaScript in Hindi
+- Node scripts and utilities
+- multi-file CommonJS projects
+- browser-oriented transpilation with mocked or real browser globals
 
----
+## Current Limits
 
-## 🗺️ Roadmap (भविष्य की योजना)
-- [ ] **Hindi Variables**: Support for non-keyword Hindi tokens as identifiers.
-- [ ] **Hindi CLI**: A dedicated runner (`hindicode my-file.hindi.js`).
-- [ ] **VS Code Extension**: Syntax highlighting and snippets for `.hindi.js`.
-- [ ] **Hindi Error Messages**: Localized compiler errors.
-- [ ] **Hindi-DOM**: Support for `दस्तावेज़` (document) and `खिड़की` (window).
+Not yet fully promised in Phase 1:
+- full ESM runtime execution
+- React/Angular integrations
+- source maps
+- framework loaders
+- full AST parser behavior
 
----
+## Important Docs
 
-## 💖 Contribute (योगदान)
-We welcome contributions! Star the repo and join the movement to make coding accessible in every language. 
+- `PHASE_ONE_PLAN.md`
+- `PHASE_ONE_CHECKLIST.md`
+- `PHASE_TWO_PLAN.md`
+- `PHASE_TWO_CHECKLIST.md`
+- `VISION.md`
+- `ROADMAP.md`
+- `docs/getting-started.md`
+- `docs/cli-usage.md`
+- `docs/cli-quick-reference.md`
+- `docs/language-spec-v1.md`
+- `docs/compiler-contract.md`
+- `docs/runtime-support.md`
+- `docs/source-map-design.md`
+- `docs/contributor-guide.md`
+- `docs/how-to-add-keyword.md`
 
-👉 **Support Us**: [Patreon](https://www.patreon.com/c/BABU_ISHU)
+## Contributing
 
----
+If you add language features, please update tests and docs together. Phase 1 is focused on correctness, diagnostics, and compiler structure.
 
-## 📜 License
-Released under the **MIT License**. 😊
+## License
+
+MIT
