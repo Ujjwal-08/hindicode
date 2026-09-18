@@ -5,9 +5,9 @@ Generated from `src/language/keywords.js` by `node tools/keywords-doc.js` — 41
 Every spelling with a nukta (ड़, फ़, ज़ …) is also accepted in its precomposed form and without the nukta
 (`बड़ा` = `बडा`). English JavaScript always works too — Hindi and English can be mixed freely.
 
-**Keywords are translated everywhere in code**, including object keys and property names.
-Avoid using a keyword as your own variable or key name (`स्थिर जानकारी = …` becomes `const console.info = …`);
-Hindicode reports this as `HC_KEYWORD_AS_NAME`.
+Keywords can't be used as your own variable names (`स्थिर जानकारी = …` would become `const console.info = …`);
+Hindicode reports this as `HC_KEYWORD_AS_NAME`. As object keys and after `.`, keywords that would not make
+sense as a name (`नया` → let, `गणित` → Math) stay in Hindi, so `{ नया: 1 }` keeps the key `नया`.
 
 - [Phrases](#phrases)
 - [Control flow](#control-flow)

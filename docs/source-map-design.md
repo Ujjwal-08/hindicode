@@ -1,6 +1,11 @@
 # Hindicode Source Map Design Notes
 
-This document captures the Phase 1 source-map design direction.
+**Status: implemented** in `src/compiler/source-map.js`. The parser records every keyword replacement as an edit
+(`parseResult.edits`); `buildSourceMap()` turns source + edits into a v3 map with a segment at every word and at both
+ends of each replacement. Translation never changes line breaks, so lines map 1:1. `compileHindiJS()` returns the map,
+the require hook / ESM loader / browser runtime inline it, and `hindicode run` enables Node source-map support.
+
+The original Phase 1 design notes follow.
 
 ## Why Source Maps Matter
 

@@ -35,7 +35,7 @@ The remaining gaps are mainly about completeness, reliability, and ecosystem usa
 - Intl constructors (`Intl.NumberFormat`), iterator protocol fields (`next`, `value`, `done`), `error.message`
 
 ### Known trade-off
-Keywords translate everywhere in code, including object keys (`{ नया: 1 }` → `{ let: 1 }`). Common Hindi words that are keywords (`जानकारी`, `नया`, `गणित`, `है`, `से`) can't be used as names or keys. `HC_KEYWORD_AS_NAME` catches declarations; object keys are not yet checked.
+Common Hindi words that are keywords (`जानकारी`, `नया`, `गणित`, `है`, `से`) can't be used as variable names; `HC_KEYWORD_AS_NAME` reports it. As object keys and property names they now stay Hindi whenever the translation would not be a sensible name (`{ नया: 1 }` keeps `नया`), so keys match strings and JSON.
 
 ## Gap 2: Module Support — ✅ Closed
 
@@ -79,7 +79,9 @@ At some point Hindicode will likely benefit from:
 - an AST transform layer
 - optional source map generation
 
-## Gap 4: Production Debugging Experience Is Weak
+## Gap 4: Production Debugging Experience — ✅ Closed
+
+Source maps (Node + browser), Hindi error messages with code frames, exact source columns, "did you mean" keyword suggestions (`HC_POSSIBLE_TYPO`), and `transpile` output on failure. Covered by `tests/debugging_runner.js`. The original notes follow.
 
 Right now failures surface as raw JavaScript syntax/runtime errors after translation.
 
@@ -153,7 +155,9 @@ There is a very small `index.d.ts`, but no real interop guidance.
 - authoring guidance for editors and autocomplete
 - richer type definitions for package APIs
 
-## Gap 8: Browser Story Is Still Mock-Centric
+## Gap 8: Browser Story — ✅ Closed
+
+`dist/hindicode.browser.js` runs `<script type="text/hindicode">` in real browsers; `examples/browser` is verified in a real browser (DOM, events, storage, fetch, ES modules). Bundler integration moves to `PHASE_THREE_PLAN.md`. The original notes follow.
 
 The current tests cover mocked browser flows, which is useful, but not enough.
 
@@ -165,7 +169,9 @@ The current tests cover mocked browser flows, which is useful, but not enough.
 - bundler-based browser execution
 - script tag / browser loader story
 
-## Gap 9: Node Story Is Good For Scripts, Not Yet Full Apps
+## Gap 9: Node Story — ✅ Closed
+
+Example programs 16, 17 and 20 cover HTTP servers, EventEmitter, streams, crypto, worker threads, child processes, URL handling and argv-driven CLIs. The original notes follow.
 
 Current Node coverage is strongest around file scripts and core helpers.
 

@@ -14,7 +14,9 @@ Focus:
 Primary outcome:
 - Hindicode stops being only a regex translator and becomes a structured language toolchain foundation.
 
-## Phase 2: Production Hindicode
+## Phase 2: Production Hindicode — ✅ mostly done
+
+Done: full keyword coverage, ES modules, browser runtime, source maps, Hindi error messages and typo suggestions. Open items (structured translation, watch/build, config) moved to Phase 3.
 
 Focus:
 - structured translation replacing the legacy path
@@ -27,7 +29,7 @@ Focus:
 Primary outcome:
 - Hindicode becomes realistic for sustained developer use, not only experiments.
 
-## Phase 3: Framework Hindicode
+## Phase 3: Framework Hindicode — next (see PHASE_THREE_PLAN.md)
 
 Focus:
 - Vite/esbuild/Webpack integration

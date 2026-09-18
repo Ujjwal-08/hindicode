@@ -95,10 +95,28 @@ translateHindiJS("दिखाओ(सच और झूठ)"); // → console.log
 
 `data-module` (or `import`/`export` in the code) runs a script as an ES module. See [`examples/browser`](examples/browser) — run `node tools/serve.js` and open http://localhost:5178/examples/browser/.
 
+## Debugging
+
+Errors are reported in Hindi (with the English original), point at the exact line and column of your `.hindi.js` file, and suggest the keyword you probably meant:
+
+```text
+❌ संदर्भ_त्रुटि (ReferenceError): 'गणीत' परिभाषित नहीं है
+   गणीत is not defined
+   💡 क्या आपका मतलब 'गणित' था? / Did you mean 'गणित' (Math)?
+   → app.hindi.js:3:7
+  2 | स्थिर x = 5;
+> 3 | दिखाओ(गणीत.अधिकतम(x));
+    |       ^
+```
+
+- **Source maps**: `compileHindiJS()` returns `map`; `hindicode run` and the require hook attach it, so Node stack traces (and browser DevTools, via the browser runtime) show Hindi source positions. For your own Node entry point, run with `node --enable-source-maps`.
+- **Misspelled keywords**: `hindicode check` warns about words like `लौटओ` (→ `लौटाओ`) — a keyword with a wrong vowel sign — and syntax errors caused by them name the keyword.
+- **`hindicode transpile`** prints the generated JavaScript, even when it does not compile.
+
 ## Things To Know
 
-- **Keywords are translated everywhere in code, including object keys and property names.** `{ नया: 1 }` becomes `{ let: 1 }` (because `नया` means `let`), while the string `"नया"` stays as it is. Use non-keyword words for your own names and keys.
-- Declaring a keyword as a name (`स्थिर जानकारी = …` → `const console.info = …`) is reported as `HC_KEYWORD_AS_NAME` with a clear message.
+- **Object keys and property names stay Hindi when the keyword would not make sense there.** `{ नया: 1, गणित: 90 }` keeps the keys `नया` and `गणित` (not `let`/`Math`), so they match strings like `"नया"` and survive `JSON`. Keywords that are real API names still translate: `{ लंबाई: 3 }` → `{ length: 3 }`, `.पकड़ो()` → `.catch()`, `.हटाओ()` → `.delete()`.
+- Declaring a keyword as a variable name (`स्थिर जानकारी = …` would become `const console.info = …`) is reported as `HC_KEYWORD_AS_NAME` with a clear message.
 - Keywords with a nukta (`बड़ा`, `फ़िल्टर`) also work in their precomposed form and without the nukta (`बडा`, `फिल्टर`).
 - HTTP headers must be ASCII, and regular expressions need `[\p{L}\p{M}]` (not just `\p{L}`) to match Devanagari words, because vowel signs are Unicode marks.
 - Names of Node modules (`fs`, `path`), options objects (`{ recursive: true }`), and less common APIs stay in English — any JavaScript name that has no alias works unchanged.
@@ -106,8 +124,10 @@ translateHindiJS("दिखाओ(सच और झूठ)"); // → console.log
 ## Current Limits
 
 - The compiler is a token-level translator, not a full AST parser.
-- No source maps yet: stack traces point at the generated JavaScript's line numbers (which match the source lines).
-- No framework loaders (React/JSX, Vue SFC, bundler plugins) yet — use `hindicode transpile` in a build step.
+- No framework loaders (React/JSX, Vite/webpack plugins, Jest transform) yet — use `hindicode transpile` in a build step.
+- No watch mode, config file or editor extension yet.
+
+What comes next is in [`PHASE_THREE_PLAN.md`](PHASE_THREE_PLAN.md).
 
 ## Tools
 
@@ -129,7 +149,7 @@ translateHindiJS("दिखाओ(सच और झूठ)"); // → console.log
 - `docs/source-map-design.md`
 - `docs/contributor-guide.md`
 - `docs/how-to-add-keyword.md`
-- `PHASE_ONE_PLAN.md`, `PHASE_TWO_PLAN.md`, `VISION.md`, `ROADMAP.md`
+- `PHASE_ONE_PLAN.md`, `PHASE_TWO_PLAN.md`, `PHASE_THREE_PLAN.md`, `VISION.md`, `ROADMAP.md`
 
 ## Contributing
 
