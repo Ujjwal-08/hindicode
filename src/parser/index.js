@@ -1,4 +1,4 @@
-const { TOKEN_TYPES, createLocator } = require("../compiler/tokenizer");
+const { TOKEN_TYPES, createLocator, tokenizeSource } = require("../compiler/tokenizer");
 const { sortedKeywords, keywordLookup } = require("../language/keywords");
 const { createDiagnostic, DiagnosticSeverity } = require("../diagnostics");
 
@@ -11,8 +11,59 @@ const keywordRegex = new RegExp(
     "g"
 );
 
-function transformCodeSegment(code) {
-    return code.replace(keywordRegex, (match) => keywordLookup[match] || match);
+// ── Keywords in name positions ────────────────────────────────────────────────
+//
+// `{ नया: 1 }` used to become `{ let: 1 }` and `अवस्था.गणित` became `अवस्था.Math`,
+// so keys never matched the strings people compare them with. When a keyword sits
+// where only a *name* can go (an object key, or after `.`) and its translation
+// would make no sense as a name, it is left in Hindi. Words that real APIs use as
+// names (`.catch`, `.finally`, `.delete`, `.length`, `{ get() {} }`) still translate.
+
+const NEVER_A_NAME = new Set(
+    ("let const var if else while do switch case break continue typeof instanceof void true false null " +
+        "undefined this super class function new extends yield await async import export try debugger " +
+        "static as in").split(" ")
+);
+
+function isUnsafeAsName(js) {
+    if (!/^[A-Za-z_$][\w$]*$/.test(js)) return true; // operators (&&) and paths (console.log)
+    if (NEVER_A_NAME.has(js)) return true;
+    // Global constructors / namespaces (Map, Math, Error, JSON, URL) — but not
+    // constants such as Number.EPSILON, Math.PI or NaN/Infinity.
+    if (js === "JSON" || js === "URL") return true;
+    return /^[A-Z]/.test(js) && /[a-z]/.test(js) && js !== "NaN" && js !== "Infinity";
+}
+
+const GLOBAL_OBJECT_BEFORE_DOT = /(?:globalThis|window|global|self|वैश्विक|विंडो|ग्लोबल)\s*\??\.$/;
+
+function lastSignificantChar(text) {
+    const trimmed = text.trimEnd();
+    return trimmed ? trimmed[trimmed.length - 1] : "";
+}
+
+// Is the keyword at code[index, index + length) in a name-only position?
+function isNamePosition(code, index, length, previousChar) {
+    const before = code.slice(0, index).trimEnd();
+    const prev = before ? before[before.length - 1] : previousChar;
+    const next = code.slice(index + length).trimStart()[0];
+
+    if ((prev === "{" || prev === ",") && next === ":") return true; // object key
+    if (prev === "." && before[before.length - 2] !== "." && !GLOBAL_OBJECT_BEFORE_DOT.test(before)) return true; // obj.नाम / obj?.नाम
+    return false;
+}
+
+// ── Translation as a list of edits ────────────────────────────────────────────
+//
+// Translation is recorded as edits { start, end, text, name } against the source so
+// the same pass produces the output code and an exact source map.
+
+function collectCodeEdits(code, offset, previousChar, edits) {
+    for (const match of code.matchAll(keywordRegex)) {
+        const js = keywordLookup[match[0]];
+        if (!js) continue;
+        if (isUnsafeAsName(js) && isNamePosition(code, match.index, match[0].length, previousChar)) continue;
+        edits.push({ start: offset + match.index, end: offset + match.index + match[0].length, text: js, name: match[0] });
+    }
 }
 
 // Returns the index just past a quoted string or template literal starting at `start`.
@@ -71,15 +122,13 @@ function findExpressionEnd(source, start) {
     return source.length;
 }
 
-function transformTemplate(value, recursiveTransform) {
-    let result = "";
+function collectTemplateEdits(value, offset, edits) {
     let index = 0;
 
     while (index < value.length) {
         const char = value[index];
 
         if (char === "\\") {
-            result += value.slice(index, index + 2);
             index += 2;
             continue;
         }
@@ -87,35 +136,53 @@ function transformTemplate(value, recursiveTransform) {
         if (char === "$" && value[index + 1] === "{") {
             const end = findExpressionEnd(value, index + 2);
             const expression = value.slice(index + 2, end);
-            result += `${"$"}{${recursiveTransform(expression)}`;
-            if (end < value.length) {
-                result += "}";
-            }
+            collectTokenEdits(tokenizeSource(expression), offset + index + 2, edits);
             index = end + 1;
             continue;
         }
 
-        result += char;
         index += 1;
     }
-
-    return result;
 }
 
-function transformTokens(tokens, recursiveTransform) {
-    return tokens
-        .map((token) => {
-            if (token.type === TOKEN_TYPES.CODE) {
-                return transformCodeSegment(token.value);
-            }
+function collectTokenEdits(tokens, offset, edits) {
+    let previousChar = "";
 
-            if (token.type === TOKEN_TYPES.TEMPLATE) {
-                return transformTemplate(token.value, recursiveTransform);
-            }
+    for (const token of tokens) {
+        if (token.type === TOKEN_TYPES.CODE) {
+            collectCodeEdits(token.value, offset + token.start, previousChar, edits);
+            previousChar = lastSignificantChar(token.value) || previousChar;
+        } else if (token.type === TOKEN_TYPES.TEMPLATE) {
+            collectTemplateEdits(token.value, offset + token.start, edits);
+            previousChar = "`";
+        } else if (token.type !== TOKEN_TYPES.LINE_COMMENT && token.type !== TOKEN_TYPES.BLOCK_COMMENT) {
+            previousChar = token.value[token.value.length - 1];
+        }
+    }
 
-            return token.value;
-        })
-        .join("");
+    return edits;
+}
+
+function applyEdits(source, edits) {
+    let output = "";
+    let position = 0;
+    for (const edit of edits) {
+        output += source.slice(position, edit.start) + edit.text;
+        position = edit.end;
+    }
+    return output + source.slice(position);
+}
+
+function transformCodeSegment(code) {
+    const edits = [];
+    collectCodeEdits(code, 0, "", edits);
+    return applyEdits(code, edits);
+}
+
+function transformTokens(tokens) {
+    const source = tokens.map((token) => token.value).join("");
+    const offset = tokens.length ? tokens[0].start : 0;
+    return applyEdits(source, collectTokenEdits(tokens, -offset, []));
 }
 
 function createParseResult({ source, tokens, transformedCode, filename = null }) {
@@ -125,6 +192,7 @@ function createParseResult({ source, tokens, transformedCode, filename = null })
         transformedCode,
         ast: null,
         diagnostics: [],
+        edits: [],
         strategy: "token-transform",
         meta: {
             filename,
@@ -132,6 +200,8 @@ function createParseResult({ source, tokens, transformedCode, filename = null })
         },
     };
 }
+
+// ── Diagnostics ───────────────────────────────────────────────────────────────
 
 const RESERVED_WORDS = new Set(
     ("break case catch class const continue debugger default delete do else export extends false finally for " +
@@ -178,21 +248,24 @@ function findKeywordNames(tokens, source, filename) {
     return diagnostics;
 }
 
-function parseSource({ source, tokens, recursiveTransform, filename = null }) {
-    const transformedCode = transformTokens(tokens, recursiveTransform);
+function parseSource({ source, tokens, filename = null }) {
+    const edits = collectTokenEdits(tokens, 0, []);
     const result = createParseResult({
         source,
         tokens,
-        transformedCode,
+        transformedCode: applyEdits(source, edits),
         filename,
     });
 
+    result.edits = edits;
     result.diagnostics.push(...findKeywordNames(tokens, source, filename));
     return result;
 }
 
 module.exports = {
+    applyEdits,
     createParseResult,
+    isUnsafeAsName,
     parseSource,
     transformCodeSegment,
     transformTokens,
