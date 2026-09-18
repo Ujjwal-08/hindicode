@@ -29,6 +29,29 @@ You can support the project here:
 दिखाओ(स्वागत(नाम));
 ```
 
+## New Keywords
+
+| Hindi | JavaScript | Hindi | JavaScript |
+|---|---|---|---|
+| `में से` | `of` (for...of) | `कुछ_है` | `some` |
+| `सभी_हैं` | `every` | `समतल` | `flat` |
+| `समतल_मानचित्र` | `flatMap` | `स्थान_पर` | `at` |
+| `प्रविष्टियों_से` | `fromEntries` | `अपना_है` | `hasOwn` |
+| `मिलान` | `match` | `बाएँ_भरो` / `दाएँ_भरो` | `padStart` / `padEnd` |
+| `पूर्णांक_बनाओ` | `parseInt` | `दशमलव_बनाओ` | `parseFloat` |
+| `संख्या_नहीं` | `isNaN` | `परिमित_है` | `isFinite` |
+| `दौड़` | `race` | `सब_निपटे` | `allSettled` |
+| `कमज़ोर_नक्शा` | `WeakMap` | `कमज़ोर_सेट` | `WeakSet` |
+| `प्रतीक` | `Symbol` | `बड़ा_पूर्णांक` | `BigInt` |
+| `यूआरएल` | `URL` | `यूआरएल_पैरामीटर` | `URLSearchParams` |
+| `रद्द_नियंत्रक` | `AbortController` | | |
+
+```javascript
+केलिए (स्थिर अंक में से [1, 2, 3]) {
+    दिखाओ(अंक);
+}
+```
+
 ## Install
 
 ```powershell

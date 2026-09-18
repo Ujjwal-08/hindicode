@@ -20,6 +20,7 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
+      - run: npm test
       - name: Semantic Release
         run: npx semantic-release
         env:

@@ -8,6 +8,7 @@ const hindiToJS = {
     "कम या बराबर": "<=",
     "ज्यादा या बराबर": ">=",
     "बराबर नहीं": "!==",
+    "में से": "of",
 
     // Control flow
     "अगर": "if",
@@ -101,6 +102,11 @@ const hindiToJS = {
     "इंडेक्स": "indexOf",
     "उलटाओ": "reverse",
     "क्रमित": "sort",
+    "कुछ_है": "some",
+    "सभी_हैं": "every",
+    "समतल": "flat",
+    "समतल_मानचित्र": "flatMap",
+    "स्थान_पर": "at",
 
     // Object methods
     "कुंजियाँ": "keys",
@@ -109,6 +115,8 @@ const hindiToJS = {
     "बनाएँ": "create",
     "मिलाओ": "assign",
     "जमाओ": "freeze",
+    "प्रविष्टियों_से": "fromEntries",
+    "अपना_है": "hasOwn",
 
     // Map / Set
     "नक्शा": "Map",
@@ -118,6 +126,10 @@ const hindiToJS = {
     "साफ़": "clear",
     "आकार": "size",
     "डालो": "add",
+    "कमज़ोर_नक्शा": "WeakMap",
+    "कमजोर_नक्शा": "WeakMap",
+    "कमज़ोर_सेट": "WeakSet",
+    "कमजोर_सेट": "WeakSet",
 
     // Promise
     "फिर": "then",
@@ -125,6 +137,8 @@ const hindiToJS = {
     "हल": "resolve",
     "अस्वीकार": "reject",
     "प्रॉमिस": "Promise",
+    "दौड़": "race",
+    "सब_निपटे": "allSettled",
 
     // Browser APIs
     "विंडो": "window",
@@ -173,6 +187,15 @@ const hindiToJS = {
     "जोड़ें": "join",
     "रेगएक्स": "RegExp",
     "अनंत": "Infinity",
+    "प्रतीक": "Symbol",
+    "बड़ा_पूर्णांक": "BigInt",
+    "यूआरएल": "URL",
+    "यूआरएल_पैरामीटर": "URLSearchParams",
+    "रद्द_नियंत्रक": "AbortController",
+    "पूर्णांक_बनाओ": "parseInt",
+    "दशमलव_बनाओ": "parseFloat",
+    "संख्या_नहीं": "isNaN",
+    "परिमित_है": "isFinite",
 
     // Math shortcuts
     "गोलाई": "Math.round",
@@ -199,6 +222,9 @@ const hindiToJS = {
     "खत्म_से": "endsWith",
     "दोहराओ": "repeat",
     "हिस्सा": "substring",
+    "मिलान": "match",
+    "बाएँ_भरो": "padStart",
+    "दाएँ_भरो": "padEnd",
 };
 
 const sortedKeywords = Object.keys(hindiToJS).sort((a, b) => b.length - a.length);

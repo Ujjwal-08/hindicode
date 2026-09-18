@@ -43,36 +43,12 @@ Today, a lot of JavaScript can be written in Hindi, but not “everything and an
 - some JavaScript constructs are only symbol-based, not phrase-based
 
 ### Specific missing language areas
-- `for...of`
 - `for...in` Hindi-first phrasing
 - `default` in broader usage patterns
 - `try` with richer promise rejection patterns
-- `Promise.race`
-- `Promise.allSettled`
 - `Promise.finally`
-- `Array.some`
-- `Array.every`
-- `Array.flat`
-- `Array.flatMap`
-- `Array.at`
 - `String.slice`
-- `String.match`
-- `String.padStart`
-- `String.padEnd`
-- `Object.fromEntries`
 - `Object.seal`
-- `Object.hasOwn`
-- `Number.isNaN`
-- `Number.isFinite`
-- `parseInt`
-- `parseFloat`
-- `BigInt`
-- `Symbol`
-- `WeakMap`
-- `WeakSet`
-- `URL`
-- `URLSearchParams`
-- `AbortController`
 
 ### Why it matters
 
