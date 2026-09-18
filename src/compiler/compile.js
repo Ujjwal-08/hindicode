@@ -2,6 +2,10 @@ const vm = require("vm");
 const { createDiagnostic } = require("../diagnostics");
 const { tokenizeSource } = require("./tokenizer");
 const { parseSource } = require("../parser");
+const { isModuleSyntax } = require("../runtime/module-syntax");
+
+// Script-parse errors that only mean "this is an ES module", not a real mistake.
+const MODULE_ONLY_ERRORS = /await is only valid|Cannot use import statement|Unexpected token 'export'|import\.meta/;
 
 function translateHindiJS(source, options = {}) {
     const tokens = tokenizeSource(source);
@@ -31,12 +35,21 @@ function extractLocationFromSyntaxError(stackText, filename) {
 }
 
 function validateGeneratedJavaScript(code, filename) {
+    if (isModuleSyntax(code)) {
+        // vm.Script cannot parse ES modules; Node reports module syntax errors on load.
+        return { format: "module", diagnostics: [] };
+    }
+
     try {
         new vm.Script(code, { filename });
-        return [];
+        return { format: "commonjs", diagnostics: [] };
     } catch (error) {
+        if (MODULE_ONLY_ERRORS.test(error.message)) {
+            return { format: "module", diagnostics: [] };
+        }
+
         const location = extractLocationFromSyntaxError(error.stack, filename || "inline.hindi.js");
-        return [
+        return { format: "commonjs", diagnostics: [
             createDiagnostic({
                 code: "HC_JS_SYNTAX_ERROR",
                 file: filename || null,
@@ -53,7 +66,7 @@ function validateGeneratedJavaScript(code, filename) {
                 },
                 hint: "Run hindicode transpile to inspect generated JavaScript around this location.",
             }),
-        ];
+        ] };
     }
 }
 
@@ -78,13 +91,12 @@ function compileHindiJS(source, options = {}) {
         throw diagnostic;
     }
 
-    const diagnostics = [
-        ...parseResult.diagnostics,
-        ...validateGeneratedJavaScript(parseResult.transformedCode, options.filename || "inline.hindi.js"),
-    ];
+    const validation = validateGeneratedJavaScript(parseResult.transformedCode, options.filename || "inline.hindi.js");
+    const diagnostics = [...parseResult.diagnostics, ...validation.diagnostics];
 
-    if (diagnostics.length > 0) {
-        throw diagnostics[0];
+    const firstError = diagnostics.find((diagnostic) => diagnostic.severity === "error");
+    if (firstError) {
+        throw firstError;
     }
 
     return {
@@ -94,6 +106,7 @@ function compileHindiJS(source, options = {}) {
         meta: {
             filename: options.filename || null,
             mode: options.mode || "runtime",
+            format: validation.format,
             parserStrategy: parseResult.strategy,
             parserStage: parseResult.meta.parserStage,
         },

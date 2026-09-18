@@ -1,40 +1,40 @@
-# Hindicode ESM Support Expectations
+# Hindicode ESM Support
 
-This document defines the supported Hindi keywords for ECMAScript Modules (ESM) and the Phase 1 implementation status.
+`hindicode run` executes ES modules directly — no build step needed.
 
 ## ESM Keywords
 
 | Hindi Keyword | English Equivalent | Purpose |
 |---------------|--------------------|---------|
-| `आयात`        | `import`           | Module import |
+| `आयात`        | `import`           | Module import (also dynamic `आयात("./x.hindi.js")`) |
 | `निर्यात`      | `export`           | Module export |
 | `से`          | `from`             | Module source |
 | `डिफ़ॉल्ट`     | `default`          | Default export/import |
-| `सब`          | `*`                | Namespace import (e.g. `आयात सब से`) |
-
-## Phase 1 Implementation Status
-
-In Phase 1, Hindicode focuses on **Syntax Translation** for ESM.
-
-### Supported Syntax (Transpilation Only)
-
-The following forms will be translated by `bin/hindicode transpile`:
+| `सबकुछ`       | `*`                | Namespace import / re-export |
+| `जैसा`        | `as`               | Rename (`के रूप में` also works) |
+| `आयात_मेटा`   | `import.meta`      | Module metadata (`आयात_मेटा.url`) |
 
 ```javascript
-// Hindicode
-आयात { name } से './module.hindi.js';
-निर्यात फ़ंक्शन hello() { ... }
-निर्यात डिफ़ॉल्ट फ़ंक्शन() { ... }
-आयात सब जैसा math से './math.hindi.js';
+// गणित.hindi.js
+निर्यात स्थिर पाई_मान = 3.14159;
+निर्यात डिफ़ॉल्ट कार्य गुणा(क, ख) { लौटाओ क * ख; }
+
+// मुख्य.hindi.js
+आयात गुणा, { पाई_मान } से "./गणित.hindi.js";
+आयात सबकुछ जैसा गणित_मॉड्यूल से "./गणित.hindi.js";
+स्थिर डेटा = इंतज़ार प्रॉमिस.हल(42); // शीर्ष-स्तरीय इंतज़ार
+दिखाओ(गुणा(2, पाई_मान), डेटा);
 ```
 
-### Known Limitations
+## How It Works
 
-1. **Runtime Execution**: The current Node.js `require` hook does NOT support ESM. Running a `.hindi.js` file with `import`/`export` using `hindicode run` or standard `require` will fail if the environment is not configured for ESM.
-2. **File Extensions**: Node.js typically requires `.mjs` or `"type": "module"` in `package.json` for ESM.
-3. **Phase 2 Goal**: Expanding the runtime loader to support ESM hooks is planned for Phase 2.
+- A file is treated as an ES module when its translated code contains a static `import`/`export`, `import.meta`, or top-level `await`.
+- `hindicode run` then registers a Node.js module loader hook (`src/runtime/esm-loader.mjs`, needs Node.js 20.6+) so `import` can load other `.hindi.js` files.
+- ES modules can import CommonJS `.hindi.js` modules (as the default export) and Node built-ins (`node:fs/promises`, …). CommonJS files keep working through the `require` hook.
+- `import()` (dynamic import) works from both module kinds.
 
-## Recommendations for Phase 1
+See `examples/programs/15_ES_मॉड्यूल.hindi.js` for a complete, tested example.
 
-- Use **CommonJS** (`निर्यात.मॉड्यूल = ...`, `अनुरोध(...)`) for direct execution via `hindicode run`.
-- Use the **transpiler** (`hindicode transpile`) if you intend to use ESM syntax for browser bundling or modern Node.js environments.
+## In the Browser
+
+`<script type="text/hindicode" data-module>` (or import/export syntax) runs as a native browser module via `dist/hindicode.browser.js`.

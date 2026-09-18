@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
+const { pathToFileURL } = require("url");
 
-const { compileHindiJS } = require("../compiler/compile");
+const { compileHindiJS, translateHindiJS } = require("../compiler/compile");
 const { createDiagnostic, formatDiagnostic } = require("../diagnostics");
 const { registerHindiExtension } = require("../runtime/register");
 
@@ -37,6 +38,22 @@ function resolveInputFile(filePath) {
     return resolved;
 }
 
+// ES module entry: register the .hindi.js loader hook, then import the file.
+function runModule(resolved) {
+    const nodeModule = require("module");
+    if (typeof nodeModule.register !== "function") {
+        throw createDiagnostic({
+            code: "HC_ESM_UNSUPPORTED_NODE",
+            file: resolved,
+            message: `Running ES modules needs Node.js 20.6 or newer (current: ${process.version}).`,
+            hint: "Upgrade Node.js, or use CommonJS (मांगो / मॉड्यूल.exports).",
+        });
+    }
+
+    nodeModule.register(pathToFileURL(path.join(__dirname, "../runtime/esm-loader.mjs")));
+    return import(pathToFileURL(resolved).href).then(() => 0);
+}
+
 function runCommand(command, filePath) {
     if (!command || command === "--help" || command === "-h") {
         printHelp();
@@ -47,19 +64,36 @@ function runCommand(command, filePath) {
 
     if (command === "run") {
         registerHindiExtension();
+        const entry = compileHindiJS(fs.readFileSync(resolved, "utf8"), { filename: resolved, mode: "runtime" });
+
+        if (entry.meta.format === "module") {
+            return runModule(resolved);
+        }
+
         require(resolved);
         return 0;
     }
 
     const source = fs.readFileSync(resolved, "utf8");
-    const result = compileHindiJS(source, { filename: resolved, mode: command });
 
     if (command === "transpile") {
-        process.stdout.write(result.code);
-        return 0;
+        // Always print the translation, even when it does not compile: that is
+        // exactly when people need to see it.
+        try {
+            process.stdout.write(compileHindiJS(source, { filename: resolved, mode: command }).code);
+            return 0;
+        } catch (error) {
+            process.stdout.write(translateHindiJS(source, { filename: resolved }));
+            throw error;
+        }
     }
 
+    const result = compileHindiJS(source, { filename: resolved, mode: command });
+
     if (command === "check") {
+        for (const diagnostic of result.diagnostics) {
+            console.warn(formatDiagnostic(diagnostic));
+        }
         console.log(`OK: ${path.basename(resolved)}`);
         return 0;
     }
