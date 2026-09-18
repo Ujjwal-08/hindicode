@@ -1,10 +1,11 @@
 const { formatDiagnostic, runCommand } = require("./index");
+const { formatRuntimeError } = require("../diagnostics/runtime");
 
 function reportError(error, io) {
     if (error && typeof error.code === "string" && error.code.startsWith("HC_")) {
         io.error(formatDiagnostic(error));
     } else {
-        io.error(error && error.stack ? error.stack : String(error));
+        io.error(formatRuntimeError(error));
     }
 }
 

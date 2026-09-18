@@ -7,32 +7,40 @@
 //
 // Scripts run in document order. `src="file.hindi.js"` is fetched, and
 // `data-module` (or import/export syntax) runs the code as an ES module.
+// Each script carries a source map, so DevTools shows and debugs the Hindi source.
 const { tokenizeSource } = require("./compiler/tokenizer");
 const { parseSource } = require("./parser");
 const { isModuleSyntax } = require("./runtime/module-syntax");
+const { buildSourceMap, inlineSourceMapComment } = require("./compiler/source-map");
 
 const SCRIPT_TYPE = "text/hindicode";
 
-function translate(source) {
-    const tokens = tokenizeSource(source);
-    return parseSource({ source, tokens, recursiveTransform: translate }).transformedCode;
+function compile(source, sourceName = "inline.hindi.js") {
+    const result = parseSource({ source, tokens: tokenizeSource(source) });
+    return { code: result.transformedCode, map: buildSourceMap(source, result.edits, { sourceName }) };
 }
 
-function execute(code, { module = isModuleSyntax(code), label = "hindicode" } = {}) {
+function translate(source) {
+    return compile(source).code;
+}
+
+function execute(code, { module = isModuleSyntax(code), label = "hindicode", map = null } = {}) {
     const script = document.createElement("script");
     if (module) script.type = "module";
-    // sourceURL names the code in DevTools stack traces
-    script.textContent = `${code}\n//# sourceURL=${label}`;
+    // The source map shows the Hindi source in DevTools; sourceURL names the script.
+    script.textContent = `${code}${map ? inlineSourceMapComment(map) : ""}\n//# sourceURL=${label}.js`;
     document.head.appendChild(script);
     script.remove();
 }
 
 async function runScript(element) {
     const source = element.src ? await (await fetch(element.src)).text() : element.textContent;
-    const code = translate(source);
+    const label = element.src || `inline-hindicode-${runScript.count++}.hindi.js`;
+    const { code, map } = compile(source, label);
     execute(code, {
         module: element.hasAttribute("data-module") || isModuleSyntax(code),
-        label: element.src || `inline-hindicode-${runScript.count++}.js`,
+        label,
+        map,
     });
 }
 runScript.count = 1;
@@ -57,4 +65,4 @@ if (typeof document !== "undefined") {
     }
 }
 
-module.exports = { translate, execute, runAll };
+module.exports = { compile, translate, execute, runAll };

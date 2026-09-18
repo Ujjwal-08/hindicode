@@ -5,6 +5,7 @@ const { pathToFileURL } = require("url");
 const { compileHindiJS, translateHindiJS } = require("../compiler/compile");
 const { createDiagnostic, formatDiagnostic } = require("../diagnostics");
 const { registerHindiExtension } = require("../runtime/register");
+const { formatRuntimeError } = require("../diagnostics/runtime");
 
 function printHelp() {
     console.log(`hindicode <command> <file>
@@ -38,6 +39,16 @@ function resolveInputFile(filePath) {
     return resolved;
 }
 
+// Uncaught errors (including unhandled promise rejections) are printed with a
+// Hindi message and a code frame. Programs with their own handler keep control.
+function installErrorReporter(io = console) {
+    process.on("uncaughtException", function hindicodeErrorReporter(error) {
+        if (process.listenerCount("uncaughtException") > 1) return;
+        io.error(formatRuntimeError(error));
+        process.exit(1);
+    });
+}
+
 // ES module entry: register the .hindi.js loader hook, then import the file.
 function runModule(resolved) {
     const nodeModule = require("module");
@@ -63,7 +74,10 @@ function runCommand(command, filePath) {
     const resolved = resolveInputFile(filePath);
 
     if (command === "run") {
-        registerHindiExtension();
+        // Map stack traces back to the Hindi source, and report crashes in Hindi.
+        if (typeof process.setSourceMapsEnabled === "function") process.setSourceMapsEnabled(true);
+        registerHindiExtension({ quiet: true });
+        installErrorReporter();
         const entry = compileHindiJS(fs.readFileSync(resolved, "utf8"), { filename: resolved, mode: "runtime" });
 
         if (entry.meta.format === "module") {

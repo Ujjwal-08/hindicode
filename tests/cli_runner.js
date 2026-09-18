@@ -57,7 +57,7 @@ const tests = [
         run() {
             assert.throws(
                 () => runCommand("check", brokenFile),
-                (error) => error.code === "HC_JS_SYNTAX_ERROR" && error.start.line === 3 && error.start.column === 10
+                (error) => error.code === "HC_JS_SYNTAX_ERROR" && error.start.line === 3 && error.start.column === 9
             );
         },
     },
@@ -78,7 +78,7 @@ const tests = [
             const exitCode = runCli([process.execPath, "hindicode", "check", brokenFile], io);
             assert.equal(exitCode, 1);
             assert.match(stderr, /HC_JS_SYNTAX_ERROR/);
-            assert.match(stderr, /broken\.hindi\.js:3:10/);
+            assert.match(stderr, /broken\.hindi\.js:3:9/);
         },
     },
 ];

@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const require = createRequire(import.meta.url);
 const { compileHindiJS } = require("../compiler/compile.js");
+const { inlineSourceMapComment } = require("../compiler/source-map.js");
 
 export async function load(url, context, nextLoad) {
     if (!url.startsWith("file:") || !url.endsWith(".hindi.js")) {
@@ -14,10 +15,10 @@ export async function load(url, context, nextLoad) {
 
     const filename = fileURLToPath(url);
     const source = await readFile(filename, "utf8");
-    const { code, meta } = compileHindiJS(source, { filename, mode: "runtime" });
+    const { code, map, meta } = compileHindiJS(source, { filename, mode: "runtime" });
 
     if (meta.format === "module") {
-        return { format: "module", source: code, shortCircuit: true };
+        return { format: "module", source: code + inlineSourceMapComment(map), shortCircuit: true };
     }
 
     // CommonJS: let Node's CJS loader handle it through the .hindi.js require hook.
