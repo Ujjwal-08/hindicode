@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="hi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>हिंदीकोड — ब्राउज़र डेमो</title>
+    <style>
+        :root { --रंग: #e8c14e; --पृष्ठ: #fff; --पाठ: #1d1d1f; --सीमा: #ddd; }
+        @media (prefers-color-scheme: dark) { :root { --पृष्ठ: #16161a; --पाठ: #ececf1; --सीमा: #333; } }
+        body { font-family: system-ui, "Noto Sans Devanagari", sans-serif; background: var(--पृष्ठ); color: var(--पाठ); max-width: 640px; margin: 2rem auto; padding: 0 16px; }
+        h1 { margin-bottom: .25rem; }
+        form { display: flex; gap: 8px; margin: 1rem 0; }
+        form input { flex: 1; padding: 8px; border: 1px solid var(--सीमा); border-radius: 6px; background: transparent; color: inherit; }
+        button { padding: 8px 14px; border: 0; border-radius: 6px; background: var(--रंग); color: #1d1d1f; cursor: pointer; }
+        ul { list-style: none; padding: 0; }
+        li { display: flex; align-items: center; gap: 8px; padding: 8px; border-bottom: 1px solid var(--सीमा); }
+        li.पूर्ण span { text-decoration: line-through; opacity: .6; }
+        li span { flex: 1; }
+        #परिणाम { font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap; border: 1px solid var(--सीमा); border-radius: 6px; padding: 10px; }
+        .ठीक { color: #1a9e55; } .गलत { color: #d33; }
+    </style>
+</head>
+<body>
+    <h1>काम सूची</h1>
+    <p id="गिनती">लोड हो रहा है…</p>
+    <form id="फ़ॉर्म">
+        <input id="इनपुट" placeholder="नया काम लिखें…" autocomplete="off">
+        <button type="submit">जोड़ें</button>
+    </form>
+    <ul id="सूची"></ul>
+    <p>घड़ी: <strong id="घड़ी">—</strong></p>
+    <h2>स्वयं-परीक्षण</h2>
+    <div id="परिणाम">चल रहा है…</div>
+
+    <script src="../../dist/hindicode.browser.js"></script>
+    <script type="text/hindicode" src="ऐप.hindi.js"></script>
+    <script type="text/hindicode" data-module>
+        // ES मॉड्यूल स्क्रिप्ट — शीर्ष-स्तरीय इंतज़ार के साथ
+        स्थिर प्रतीक्षा = (ms) => नया बनाओ प्रॉमिस((हल_करो) => समय_बाद(हल_करो, ms));
+        इंतज़ार प्रतीक्षा(1);
+        विंडो.मॉड्यूल_चला = सच;
+    </script>
+</body>
+</html>
