@@ -1,6 +1,6 @@
 # HindiCode - हिंदी में जावास्क्रिप्ट लिखें!
 
-Hindicode is evolving from a runtime keyword translator into a Hindi-first JavaScript compiler pipeline.
+Write JavaScript in Hindi. Hindicode translates Hindi keywords to JavaScript and runs the result in Node.js or the browser — any JavaScript program can be written with it, and English JavaScript can be mixed in freely.
 
 ### 💖 Donate
 
@@ -9,14 +9,6 @@ You can support the project here:
 - **Patreon:** https://www.patreon.com/cw/BABU_ISHU  
 - **PayPal:** https://www.paypal.com/ncp/payment/SECBQ62TRZZ6Y
   
-## What Hindicode Supports Today
-
-- `.hindi.js` runtime execution in Node
-- `hindicode run`, `hindicode check`, and `hindicode transpile`
-- multi-file CommonJS-style Hindicode programs
-- browser-targeted transpilation experiments
-- structured diagnostics for compile-time syntax failures
-
 ## Quick Example
 
 ```javascript
@@ -26,31 +18,46 @@ You can support the project here:
     लौटाओ `नमस्ते ${व्यक्ति}`;
 }
 
-दिखाओ(स्वागत(नाम));
-```
-
-## New Keywords
-
-| Hindi | JavaScript | Hindi | JavaScript |
-|---|---|---|---|
-| `में से` | `of` (for...of) | `कुछ_है` | `some` |
-| `सभी_हैं` | `every` | `समतल` | `flat` |
-| `समतल_मानचित्र` | `flatMap` | `स्थान_पर` | `at` |
-| `प्रविष्टियों_से` | `fromEntries` | `अपना_है` | `hasOwn` |
-| `मिलान` | `match` | `बाएँ_भरो` / `दाएँ_भरो` | `padStart` / `padEnd` |
-| `पूर्णांक_बनाओ` | `parseInt` | `दशमलव_बनाओ` | `parseFloat` |
-| `संख्या_नहीं` | `isNaN` | `परिमित_है` | `isFinite` |
-| `दौड़` | `race` | `सब_निपटे` | `allSettled` |
-| `कमज़ोर_नक्शा` | `WeakMap` | `कमज़ोर_सेट` | `WeakSet` |
-| `प्रतीक` | `Symbol` | `बड़ा_पूर्णांक` | `BigInt` |
-| `यूआरएल` | `URL` | `यूआरएल_पैरामीटर` | `URLSearchParams` |
-| `रद्द_नियंत्रक` | `AbortController` | | |
-
-```javascript
 केलिए (स्थिर अंक में से [1, 2, 3]) {
-    दिखाओ(अंक);
+    दिखाओ(स्वागत(नाम), अंक);
 }
 ```
+
+## How Complete Is It?
+
+| Measure | Result |
+|---|---|
+| JavaScript keywords, operators, globals and built-in methods with a Hindi alias (`npm run coverage`) | **100%** (442 of 442 tracked) |
+| Hindi aliases | **418** (+ automatic nukta spelling variants) |
+| Example programs covering every JS feature area, written in Hindi and passing their self-tests | **20 programs, 646 checks** + a browser app (14 checks) |
+| Share of code words in those programs that are Hindi (`npm run purity`) | **92%** — the rest are mostly module names like `fs`, `path` |
+
+The 20 programs in [`examples/programs`](examples/programs) show what can be written, and run as part of `npm test`:
+
+| # | Program | Covers |
+|---|---|---|
+| 01 | चर और ऑपरेटर | declarations, types, every operator, `??`, `?.`, conversions |
+| 02 | नियंत्रण प्रवाह | if/else, switch, all loops, labels, break/continue |
+| 03 | फ़ंक्शन | arrows, defaults, rest, closures, recursion, call/apply/bind, currying, memoization |
+| 04 | वस्तुएँ | getters/setters, destructuring, spread, descriptors, freeze/seal, prototypes, `groupBy` |
+| 05 | वर्ग और OOP | private `#fields`, static blocks, inheritance, `super`, mixins, `new.target` |
+| 06 | ऐरे | every Array method incl. `toSorted`/`with`/`fromAsync`, typed arrays |
+| 07 | टेक्स्ट और रेगएक्स | every String method, tagged templates, named groups, `matchAll`, Unicode |
+| 08 | संख्या, गणित, तारीख | Number/Math/BigInt/Date, Intl (₹ formatting, Hindi dates) |
+| 09 | इटरेटर और जेनरेटर | iterator protocol, generators, `yield*`, async generators, `for await` |
+| 10 | असिंक | promises, all/race/any/allSettled, `withResolvers`, event loop, abort, retry, pools |
+| 11 | त्रुटि प्रबंधन | try/catch/finally, custom error classes, `cause`, `AggregateError` |
+| 12 | संग्रह | Map/Set, set algebra, WeakMap/WeakSet/WeakRef, LRU cache |
+| 13 | मेटाप्रोग्रामिंग | Proxy traps, Reflect, well-known Symbols |
+| 14 | JSON और बाइनरी | reviver/replacer, `ArrayBuffer`/`DataView`, Buffer, Base64, URL |
+| 15 | ES मॉड्यूल | import/export, re-exports, dynamic `import()`, `import.meta`, top-level await |
+| 16 | Node कोर | fs, path, os, events, streams, zlib, crypto (AES/scrypt), child_process, worker_threads |
+| 17 | HTTP सर्वर | a REST API with routing, middleware, auth, streaming, `fetch` client |
+| 18 | एल्गोरिदम | sorting, BST, heap, graphs (BFS/DFS/Dijkstra), trie, DP, backtracking |
+| 19 | डिज़ाइन पैटर्न | factory, builder, observer, pub/sub, command (undo/redo), state machine, DI |
+| 20 | काम सूची CLI | a complete command-line app that saves to a file |
+
+The full alias list is in [`docs/keywords.md`](docs/keywords.md).
 
 ## Install
 
@@ -61,59 +68,72 @@ npm install hindicode
 ## CLI
 
 ```powershell
-hindicode run app.hindi.js
-hindicode check app.hindi.js
-hindicode transpile app.hindi.js
+hindicode run app.hindi.js          # CommonJS or ES modules (import/export, top-level await)
+hindicode check app.hindi.js        # validate; also prints warnings
+hindicode transpile app.hindi.js    # print the generated JavaScript
 ```
 
-## Compiler Direction
+## In Node.js
 
-Phase 1 now includes:
-- keyword inventory module
-- tokenizer
-- parser-strategy layer
-- compiler contract
-- runtime registration module
-- CLI entrypoints
-- parser, CLI, integration, and scenario coverage
+```javascript
+require("hindicode");            // registers the .hindi.js loader
+const app = require("./app.hindi.js");
 
-## Best-Supported Phase 1 Use Cases
+const { translateHindiJS } = require("hindicode");
+translateHindiJS("दिखाओ(सच और झूठ)"); // → console.log(true && false)
+```
 
-- learning JavaScript in Hindi
-- Node scripts and utilities
-- multi-file CommonJS projects
-- browser-oriented transpilation with mocked or real browser globals
+## In the Browser
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/hindicode/dist/hindicode.browser.js"></script>
+<script type="text/hindicode">
+    दस्तावेज़.तत्व_ढूँढो("h1").टेक्स्ट_सामग्री = "नमस्ते ब्राउज़र!";
+</script>
+<script type="text/hindicode" src="ऐप.hindi.js"></script>
+```
+
+`data-module` (or `import`/`export` in the code) runs a script as an ES module. See [`examples/browser`](examples/browser) — run `node tools/serve.js` and open http://localhost:5178/examples/browser/.
+
+## Things To Know
+
+- **Keywords are translated everywhere in code, including object keys and property names.** `{ नया: 1 }` becomes `{ let: 1 }` (because `नया` means `let`), while the string `"नया"` stays as it is. Use non-keyword words for your own names and keys.
+- Declaring a keyword as a name (`स्थिर जानकारी = …` → `const console.info = …`) is reported as `HC_KEYWORD_AS_NAME` with a clear message.
+- Keywords with a nukta (`बड़ा`, `फ़िल्टर`) also work in their precomposed form and without the nukta (`बडा`, `फिल्टर`).
+- HTTP headers must be ASCII, and regular expressions need `[\p{L}\p{M}]` (not just `\p{L}`) to match Devanagari words, because vowel signs are Unicode marks.
+- Names of Node modules (`fs`, `path`), options objects (`{ recursive: true }`), and less common APIs stay in English — any JavaScript name that has no alias works unchanged.
 
 ## Current Limits
 
-Not yet fully promised in Phase 1:
-- full ESM runtime execution
-- React/Angular integrations
-- source maps
-- framework loaders
-- full AST parser behavior
+- The compiler is a token-level translator, not a full AST parser.
+- No source maps yet: stack traces point at the generated JavaScript's line numbers (which match the source lines).
+- No framework loaders (React/JSX, Vue SFC, bundler plugins) yet — use `hindicode transpile` in a build step.
+
+## Tools
+
+- `npm run coverage` — Hindi coverage of the JavaScript surface
+- `npm run purity` — how much of each example program is Hindi
+- `node tools/keywords-doc.js` — regenerate `docs/keywords.md`
+- `npm run build` — build `dist/hindicode.browser.js`
 
 ## Important Docs
 
-- `PHASE_ONE_PLAN.md`
-- `PHASE_ONE_CHECKLIST.md`
-- `PHASE_TWO_PLAN.md`
-- `PHASE_TWO_CHECKLIST.md`
-- `VISION.md`
-- `ROADMAP.md`
+- `docs/keywords.md` — every Hindi alias
 - `docs/getting-started.md`
 - `docs/cli-usage.md`
 - `docs/cli-quick-reference.md`
 - `docs/language-spec-v1.md`
+- `docs/esm-support.md`
 - `docs/compiler-contract.md`
 - `docs/runtime-support.md`
 - `docs/source-map-design.md`
 - `docs/contributor-guide.md`
 - `docs/how-to-add-keyword.md`
+- `PHASE_ONE_PLAN.md`, `PHASE_TWO_PLAN.md`, `VISION.md`, `ROADMAP.md`
 
 ## Contributing
 
-If you add language features, please update tests and docs together. Phase 1 is focused on correctness, diagnostics, and compiler structure.
+If you add language features, please update tests and docs together. New keywords need a program in `examples/programs` that uses them, and `node tools/keywords-doc.js` to refresh the reference.
 
 ## License
 

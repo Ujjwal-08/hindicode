@@ -25,56 +25,25 @@ That is a strong foundation.
 
 The remaining gaps are mainly about completeness, reliability, and ecosystem usability.
 
-## Gap 1: Hindi-First Language Surface Is Incomplete
+## Gap 1: Hindi-First Language Surface — ✅ Largely Closed
 
-Today, a lot of JavaScript can be written in Hindi, but not “everything and anything” naturally.
+`npm run coverage` tracks 442 JavaScript keywords, operators, globals and built-in methods; all of them now have a Hindi alias (418 aliases, listed in `docs/keywords.md`). The 20 programs in `examples/programs` exercise every feature area and are 92% Hindi by word count (`npm run purity`).
 
-### What exists now
-- control flow basics
-- common declarations
-- common literals
-- some OOP and async terms
-- several array/object/string helpers
-- some Node/browser globals
+### What is still English
+- property names of options objects (`{ recursive: true }`, `{ method: "POST" }`) and event names
+- Node module names and their less common methods (`fs.mkdtempSync`, `crypto.createHash`)
+- Intl constructors (`Intl.NumberFormat`), iterator protocol fields (`next`, `value`, `done`), `error.message`
 
-### What is still thin
-- many built-in methods still require English method names
-- many common developer idioms still mix Hindi keywords with English APIs
-- some JavaScript constructs are only symbol-based, not phrase-based
+### Known trade-off
+Keywords translate everywhere in code, including object keys (`{ नया: 1 }` → `{ let: 1 }`). Common Hindi words that are keywords (`जानकारी`, `नया`, `गणित`, `है`, `से`) can't be used as names or keys. `HC_KEYWORD_AS_NAME` catches declarations; object keys are not yet checked.
 
-### Specific missing language areas
-- `for...in` Hindi-first phrasing
-- `default` in broader usage patterns
-- `try` with richer promise rejection patterns
-- `Promise.finally`
-- `String.slice`
-- `Object.seal`
+## Gap 2: Module Support — ✅ Closed
 
-### Why it matters
+`hindicode run` detects ES module syntax (static import/export, `import.meta`, top-level await) and registers a Node.js loader hook (`src/runtime/esm-loader.mjs`) so `.hindi.js` files can import each other. Covered by `examples/programs/15_ES_मॉड्यूल.hindi.js`: named/default/namespace imports, re-exports (`निर्यात सबकुछ से`), CommonJS interop, dynamic `import()`, `import.meta`, top-level await.
 
-If users must constantly drop back to English APIs, Hindicode feels like partial localization rather than a full Hindi coding environment.
-
-## Gap 2: Module Support Is Only Halfway There
-
-The dictionary includes module keywords like:
-- `आयात`
-- `निर्यात`
-- `डिफ़ॉल्ट`
-- `से`
-
-But operationally, the package is still centered on a CommonJS require hook.
-
-### Missing pieces
-- real ESM loader support
-- multi-file import/export test fixtures
-- package boundary behavior
-- mixed `.js` and `.hindi.js` module graphs
-- default export and named export execution coverage
-- dynamic import coverage
-
-### Why it matters
-
-Modern JavaScript increasingly assumes ESM. Without a module story, Hindicode is limited mostly to Node CommonJS scripts.
+### Remaining
+- ESM files imported from plain `.js` ESM outside `hindicode run` need the loader registered manually
+- named imports from CommonJS `.hindi.js` modules (only the default export is available)
 
 ## Gap 3: Translator Architecture Will Hit Limits
 
