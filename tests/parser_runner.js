@@ -59,6 +59,20 @@ const tests = [
         },
     },
     {
+        name: "translates template expressions that contain braces",
+        run() {
+            const result = translateHindiJS("दिखाओ(`कुल: ${ [1, 2].मानचित्र((x) => ({ v: x })).लंबाई } ठीक`);");
+            assert.equal(result, "console.log(`कुल: ${ [1, 2].map((x) => ({ v: x })).length } ठीक`);");
+        },
+    },
+    {
+        name: "translates keywords inside templates nested in template expressions",
+        run() {
+            const result = translateHindiJS("दिखाओ(`a ${ `b ${सच} '}'` } c`);");
+            assert.equal(result, "console.log(`a ${ `b ${true} '}'` } c`);");
+        },
+    },
+    {
         name: "compile path surfaces invalid generated syntax as a structured diagnostic",
         run() {
             assert.throws(

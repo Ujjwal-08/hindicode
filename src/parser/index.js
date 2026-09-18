@@ -14,6 +14,93 @@ function transformCodeSegment(code) {
     return code.replace(keywordRegex, (match) => hindiToJS[match] || match);
 }
 
+// Returns the index just past a quoted string or template literal starting at `start`.
+function skipLiteral(source, start) {
+    const quote = source[start];
+    let index = start + 1;
+
+    while (index < source.length) {
+        const char = source[index];
+
+        if (char === "\\") {
+            index += 2;
+            continue;
+        }
+
+        if (char === quote) {
+            return index + 1;
+        }
+
+        if (quote === "`" && char === "$" && source[index + 1] === "{") {
+            index = findExpressionEnd(source, index + 2) + 1;
+            continue;
+        }
+
+        index += 1;
+    }
+
+    return index;
+}
+
+// Given the index right after `${`, returns the index of its matching `}`.
+function findExpressionEnd(source, start) {
+    let depth = 0;
+    let index = start;
+
+    while (index < source.length) {
+        const char = source[index];
+
+        if (char === "'" || char === "\"" || char === "`") {
+            index = skipLiteral(source, index);
+            continue;
+        }
+
+        if (char === "{") {
+            depth += 1;
+        } else if (char === "}") {
+            if (depth === 0) {
+                return index;
+            }
+            depth -= 1;
+        }
+
+        index += 1;
+    }
+
+    return source.length;
+}
+
+function transformTemplate(value, recursiveTransform) {
+    let result = "";
+    let index = 0;
+
+    while (index < value.length) {
+        const char = value[index];
+
+        if (char === "\\") {
+            result += value.slice(index, index + 2);
+            index += 2;
+            continue;
+        }
+
+        if (char === "$" && value[index + 1] === "{") {
+            const end = findExpressionEnd(value, index + 2);
+            const expression = value.slice(index + 2, end);
+            result += `${"$"}{${recursiveTransform(expression)}`;
+            if (end < value.length) {
+                result += "}";
+            }
+            index = end + 1;
+            continue;
+        }
+
+        result += char;
+        index += 1;
+    }
+
+    return result;
+}
+
 function transformTokens(tokens, recursiveTransform) {
     return tokens
         .map((token) => {
@@ -22,9 +109,7 @@ function transformTokens(tokens, recursiveTransform) {
             }
 
             if (token.type === TOKEN_TYPES.TEMPLATE) {
-                return token.value.replace(/\${([\s\S]*?)}/g, (fullMatch, expression) => {
-                    return `${"$"}{${recursiveTransform(expression)}}`;
-                });
+                return transformTemplate(token.value, recursiveTransform);
             }
 
             return token.value;
