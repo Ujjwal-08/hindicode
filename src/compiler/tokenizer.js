@@ -126,34 +126,40 @@ function readTemplate(source, start) {
     return source.length;
 }
 
-function getLocation(source, index) {
-    let line = 1;
-    let column = 1;
-
-    for (let i = 0; i < index; i++) {
-        if (source[i] === "\n") {
-            line++;
-            column = 1;
-        } else {
-            column++;
-        }
+// Returns index -> { line, column, index } using a precomputed line table,
+// so locating every token stays linear in the size of the file.
+function createLocator(source) {
+    const lineStarts = [0];
+    for (let i = 0; i < source.length; i++) {
+        if (source[i] === "\n") lineStarts.push(i + 1);
     }
 
-    return { line, column, index };
+    return (index) => {
+        let low = 0;
+        let high = lineStarts.length - 1;
+        while (low < high) {
+            const mid = (low + high + 1) >> 1;
+            if (lineStarts[mid] <= index) low = mid;
+            else high = mid - 1;
+        }
+        return { line: low + 1, column: index - lineStarts[low] + 1, index };
+    };
 }
 
-function createToken(source, type, start, end) {
-    return {
+function getLocation(source, index) {
+    return createLocator(source)(index);
+}
+
+function tokenizeSource(source) {
+    const locate = createLocator(source);
+    const createToken = (_source, type, start, end) => ({
         type,
         value: source.slice(start, end),
         start,
         end,
-        startLoc: getLocation(source, start),
-        endLoc: getLocation(source, end),
-    };
-}
-
-function tokenizeSource(source) {
+        startLoc: locate(start),
+        endLoc: locate(end),
+    });
     const tokens = [];
     let codeStart = 0;
     let index = 0;
@@ -215,5 +221,7 @@ function tokenizeSource(source) {
 
 module.exports = {
     TOKEN_TYPES,
+    createLocator,
+    getLocation,
     tokenizeSource,
 };
