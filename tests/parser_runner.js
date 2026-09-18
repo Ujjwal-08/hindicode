@@ -73,6 +73,26 @@ const tests = [
         },
     },
     {
+        name: "reports a keyword used as a declared name with a clear diagnostic",
+        run() {
+            assert.throws(
+                () => compileHindiJS("स्थिर जानकारी = 1;", { filename: "naam.hindi.js" }),
+                (error) => error.code === "HC_KEYWORD_AS_NAME" && error.start.line === 1 && error.start.column === 7
+            );
+            // identifier-valued keywords only warn, anonymous class expressions are fine
+            const warned = compileHindiJS("स्थिर नक्शा = 1; स्थिर क = वर्ग विस्तार ऐरे {};");
+            assert.deepEqual(warned.diagnostics.map((d) => d.severity), ["warning"]);
+        },
+    },
+    {
+        name: "accepts precomposed and nukta-less spellings of keywords",
+        run() {
+            assert.equal(translateHindiJS("5 बड़ा 3"), "5 > 3");
+            assert.equal(translateHindiJS("5 बडा 3"), "5 > 3");
+            assert.equal(translateHindiJS("पकडो"), "catch");
+        },
+    },
+    {
         name: "compile path surfaces invalid generated syntax as a structured diagnostic",
         run() {
             assert.throws(

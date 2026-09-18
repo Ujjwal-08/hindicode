@@ -1,5 +1,6 @@
-const { TOKEN_TYPES } = require("../compiler/tokenizer");
-const { sortedKeywords, hindiToJS } = require("../language/keywords");
+const { TOKEN_TYPES, createLocator } = require("../compiler/tokenizer");
+const { sortedKeywords, keywordLookup } = require("../language/keywords");
+const { createDiagnostic, DiagnosticSeverity } = require("../diagnostics");
 
 function escapeForRegex(value) {
     return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -11,7 +12,7 @@ const keywordRegex = new RegExp(
 );
 
 function transformCodeSegment(code) {
-    return code.replace(keywordRegex, (match) => hindiToJS[match] || match);
+    return code.replace(keywordRegex, (match) => keywordLookup[match] || match);
 }
 
 // Returns the index just past a quoted string or template literal starting at `start`.
@@ -132,15 +133,62 @@ function createParseResult({ source, tokens, transformedCode, filename = null })
     };
 }
 
+const RESERVED_WORDS = new Set(
+    ("break case catch class const continue debugger default delete do else export extends false finally for " +
+        "function if import in instanceof new null return super switch this throw true try typeof var void while " +
+        "with yield let static await async of get set as from constructor undefined NaN Infinity").split(" ")
+);
+
+// A declaration such as `स्थिर जानकारी = 1` silently becomes `const console.info = 1`.
+// Catch keywords used as declared names and explain the problem in Hindi and English.
+const declarationRegex = new RegExp(
+    `(?<![\\u0900-\\u097F\\w$])(?:नया|स्थिर|पुराना|कार्य\\*?|वर्ग|let|const|var|function\\*?|class)\\s+(${sortedKeywords.map(escapeForRegex).join("|")})(?![\\u0900-\\u097F\\w$])`,
+    "g"
+);
+
+function findKeywordNames(tokens, source, filename) {
+    const diagnostics = [];
+    let locate = null;
+
+    for (const token of tokens) {
+        if (token.type !== TOKEN_TYPES.CODE) continue;
+
+        for (const match of token.value.matchAll(declarationRegex)) {
+            const name = match[1];
+            const js = keywordLookup[name];
+            if (js === "extends") continue; // anonymous `वर्ग विस्तार आधार {}` is valid
+            const breaksSyntax = !/^[A-Za-z_$][\w$]*$/.test(js) || RESERVED_WORDS.has(js);
+            locate = locate || createLocator(source);
+            const index = token.start + match.index + match[0].lastIndexOf(name);
+
+            diagnostics.push(
+                createDiagnostic({
+                    code: "HC_KEYWORD_AS_NAME",
+                    severity: breaksSyntax ? DiagnosticSeverity.ERROR : DiagnosticSeverity.WARNING,
+                    file: filename,
+                    message: `'${name}' Hindicode कीवर्ड है (→ ${js}), इसे नाम के रूप में इस्तेमाल नहीं कर सकते / '${name}' is a Hindicode keyword for ${js} and cannot be used as a name.`,
+                    start: locate(index),
+                    end: locate(index + name.length),
+                    hint: `कोई दूसरा नाम चुनें, जैसे '${name}_मान' / Rename it, e.g. '${name}_मान'.`,
+                })
+            );
+        }
+    }
+
+    return diagnostics;
+}
+
 function parseSource({ source, tokens, recursiveTransform, filename = null }) {
     const transformedCode = transformTokens(tokens, recursiveTransform);
-
-    return createParseResult({
+    const result = createParseResult({
         source,
         tokens,
         transformedCode,
         filename,
     });
+
+    result.diagnostics.push(...findKeywordNames(tokens, source, filename));
+    return result;
 }
 
 module.exports = {

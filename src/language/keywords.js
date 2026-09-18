@@ -225,11 +225,301 @@ const hindiToJS = {
     "मिलान": "match",
     "बाएँ_भरो": "padStart",
     "दाएँ_भरो": "padEnd",
+    "अक्षर_पर": "charAt",
+    "अक्षर_कोड": "charCodeAt",
+    "कोड_बिंदु": "codePointAt",
+    "सुगठित_है": "isWellFormed",
+    "सुगठित_करो": "toWellFormed",
+    "स्थानीय_तुलना": "localeCompare",
+    "सभी_मिलान": "matchAll",
+    "सामान्य_करो": "normalize",
+    "सब_बदलो": "replaceAll",
+    "शुरू_काटो": "trimStart",
+    "अंत_काटो": "trimEnd",
+    "स्थानीय_छोटे_अक्षर": "toLocaleLowerCase",
+    "स्थानीय_बड़े_अक्षर": "toLocaleUpperCase",
+    "कोड_से_अक्षर": "fromCharCode",
+    "कोड_बिंदु_से": "fromCodePoint",
+    "कच्चा": "raw",
+
+    // Keywords & declarations (continued)
+    "स्थैतिक": "static",
+    "नया_लक्ष्य": "new.target",
+    "आयात_मेटा": "import.meta",
+    "पुनरावर्तक": "iterator",
+    "असिंक_पुनरावर्तक": "asyncIterator",
+    "निर्माता": "constructor",
+    "व्यर्थ": "void",
+    "डिबगर": "debugger",
+    "जैसा": "as",
+    "सबकुछ": "*",
+    "फ़ंक्शन": "function",
+    "अमान्य_संख्या": "NaN",
+    "वैश्विक": "globalThis",
+    "ग्लोबल": "global",
+
+    // Operators (continued)
+    "ढीला_बराबर_नहीं": "!=",
+    "ढीला_बराबर": "==",
+    "अगर_खाली_तो": "??",
+
+    // Functions
+    "फलन": "Function",
+    "बुलाओ": "call",
+    "लागू_करो": "apply",
+    "बाँधो": "bind",
+
+    // More built-in objects
+    "कमज़ोर_संदर्भ": "WeakRef",
+    "समापन_रजिस्टर": "FinalizationRegistry",
+    "प्रॉक्सी": "Proxy",
+    "प्रतिबिंब": "Reflect",
+    "अंतरराष्ट्रीय": "Intl",
+    "बाइट_बफर": "ArrayBuffer",
+    "डेटा_दृश्य": "DataView",
+    "बाइट_ऐरे": "Uint8Array",
+    "पूर्णांक32_ऐरे": "Int32Array",
+    "दशमलव64_ऐरे": "Float64Array",
+    "प्रकार_त्रुटि": "TypeError",
+    "सीमा_त्रुटि": "RangeError",
+    "वाक्य_त्रुटि": "SyntaxError",
+    "संदर्भ_त्रुटि": "ReferenceError",
+    "समूह_त्रुटि": "AggregateError",
+    "यूआरएल_भाग_एनकोड": "encodeURIComponent",
+    "यूआरएल_भाग_डिकोड": "decodeURIComponent",
+    "यूआरएल_एनकोड": "encodeURI",
+    "यूआरएल_डिकोड": "decodeURI",
+    "गहरी_प्रति": "structuredClone",
+    "सूक्ष्म_कार्य": "queueMicrotask",
+    "तुरंत_बाद": "setImmediate",
+
+    // Console (continued)
+    "डिबग_दिखाओ": "console.debug",
+    "संरचना_दिखाओ": "console.dir",
+    "तालिका_दिखाओ": "console.table",
+    "समय_शुरू": "console.time",
+    "समय_खत्म": "console.timeEnd",
+    "समय_लॉग": "console.timeLog",
+    "ट्रेस_दिखाओ": "console.trace",
+    "दावा_करो": "console.assert",
+    "गिनती_करो": "console.count",
+    "गिनती_रीसेट": "console.countReset",
+    "समूह_शुरू": "console.group",
+    "समूह_बंद_शुरू": "console.groupCollapsed",
+    "समूह_खत्म": "console.groupEnd",
+
+    // Array methods (continued)
+    "अंदर_कॉपी": "copyWithin",
+    "भरो": "fill",
+    "सूचकांक_ढूँढो": "findIndex",
+    "आखिरी_ढूँढो": "findLast",
+    "आखिरी_सूचकांक_ढूँढो": "findLastIndex",
+    "आखिरी_इंडेक्स": "lastIndexOf",
+    "जोड़तोड़": "splice",
+    "दाएँ_से_कमकरो": "reduceRight",
+    "उलटी_प्रति": "toReversed",
+    "क्रमित_प्रति": "toSorted",
+    "जोड़तोड़_प्रति": "toSpliced",
+    "के_साथ": "with",
+    "स्थानीय_टेक्स्ट": "toLocaleString",
+    "टेक्स्ट_बनाओ": "toString",
+    "मूल_मान": "valueOf",
+    "ऐरे_है": "isArray",
+    "असिंक_से": "fromAsync",
+
+    // Object methods (continued)
+    "गुण_विवरण": "getOwnPropertyDescriptor",
+    "सभी_गुण_विवरण": "getOwnPropertyDescriptors",
+    "गुण_नाम": "getOwnPropertyNames",
+    "गुण_प्रतीक": "getOwnPropertySymbols",
+    "एक_ही_है": "is",
+    "विस्तार_रोको": "preventExtensions",
+    "सील_करो": "seal",
+    "गुण_परिभाषित_करो": "defineProperty",
+    "सभी_गुण_परिभाषित_करो": "defineProperties",
+    "प्रोटो_लाओ": "getPrototypeOf",
+    "प्रोटो_रखो": "setPrototypeOf",
+    "विस्तार_योग्य_है": "isExtensible",
+    "जमा_है": "isFrozen",
+    "सील_है": "isSealed",
+    "समूह_बनाओ": "groupBy",
+    "अपना_गुण_है": "hasOwnProperty",
+
+    // Number methods (continued)
+    "पूर्णांक_है": "isInteger",
+    "सुरक्षित_पूर्णांक_है": "isSafeInteger",
+    "अधिकतम_मान": "MAX_VALUE",
+    "न्यूनतम_मान": "MIN_VALUE",
+    "ऋण_अनंत": "NEGATIVE_INFINITY",
+    "धन_अनंत": "POSITIVE_INFINITY",
+    "अधिकतम_सुरक्षित": "MAX_SAFE_INTEGER",
+    "न्यूनतम_सुरक्षित": "MIN_SAFE_INTEGER",
+    "एप्सिलॉन": "EPSILON",
+    "घातांकी": "toExponential",
+    "दशमलव_तक": "toFixed",
+    "परिशुद्धता": "toPrecision",
+
+    // Math (continued)
+    "निरपेक्ष": "Math.abs",
+    "घात": "Math.pow",
+    "चिह्न": "Math.sign",
+    "पूर्णांक_भाग": "Math.trunc",
+    "घनमूल": "Math.cbrt",
+    "कर्ण": "Math.hypot",
+    "घातांक": "Math.exp",
+    "घातांक_ऋण1": "Math.expm1",
+    "लघुगणक": "Math.log",
+    "लघुगणक2": "Math.log2",
+    "लघुगणक10": "Math.log10",
+    "लघुगणक1_धन": "Math.log1p",
+    "ज्या": "Math.sin",
+    "कोज्या": "Math.cos",
+    "स्पर्शज्या": "Math.tan",
+    "व्युत्क्रम_ज्या": "Math.asin",
+    "व्युत्क्रम_कोज्या": "Math.acos",
+    "व्युत्क्रम_स्पर्शज्या": "Math.atan",
+    "व्युत्क्रम_स्पर्शज्या2": "Math.atan2",
+    "अतिपरवलयिक_ज्या": "Math.sinh",
+    "अतिपरवलयिक_कोज्या": "Math.cosh",
+    "अतिपरवलयिक_स्पर्शज्या": "Math.tanh",
+    "व्युत्क्रम_अतिपरवलयिक_ज्या": "Math.asinh",
+    "व्युत्क्रम_अतिपरवलयिक_कोज्या": "Math.acosh",
+    "व्युत्क्रम_अतिपरवलयिक_स्पर्शज्या": "Math.atanh",
+    "अग्र_शून्य32": "Math.clz32",
+    "पूर्णांक_गुणा": "Math.imul",
+    "एकल_गोलाई": "Math.fround",
+    "अर्ध_गोलाई": "Math.f16round",
+    "गणित_ई": "Math.E",
+    "प्राकृत_लघु10": "Math.LN10",
+    "प्राकृत_लघु2": "Math.LN2",
+    "लघु10_ई": "Math.LOG10E",
+    "लघु2_ई": "Math.LOG2E",
+    "आधा_वर्गमूल2": "Math.SQRT1_2",
+    "वर्गमूल2": "Math.SQRT2",
+
+    // JSON (continued)
+    "कच्चा_जेसन": "JSON.rawJSON",
+    "कच्चा_जेसन_है": "JSON.isRawJSON",
+
+    // Promise (continued)
+    "कोई_भी": "any",
+    "हल_सहित": "withResolvers",
+
+    // Set algebra
+    "अंतर_निकालो": "difference",
+    "प्रतिच्छेद": "intersection",
+    "सममित_अंतर": "symmetricDifference",
+    "संघ_बनाओ": "union",
+    "उपसमुच्चय_है": "isSubsetOf",
+    "अधिसमुच्चय_है": "isSupersetOf",
+    "असंयुक्त_है": "isDisjointFrom",
+
+    // Date
+    "अभी": "now",
+    "तारीख_टेक्स्ट": "toDateString",
+    "समय_टेक्स्ट": "toTimeString",
+    "आईएसओ_टेक्स्ट": "toISOString",
+    "जेसन_बनाओ": "toJSON",
+    "स्थानीय_तारीख": "toLocaleDateString",
+    "स्थानीय_समय": "toLocaleTimeString",
+    "तारीख_लो": "getDate",
+    "तारीख_रखो": "setDate",
+    "दिन_लो": "getDay",
+    "वर्ष_लो": "getFullYear",
+    "वर्ष_रखो": "setFullYear",
+    "महीना_लो": "getMonth",
+    "महीना_रखो": "setMonth",
+    "घंटे_लो": "getHours",
+    "घंटे_रखो": "setHours",
+    "मिनट_लो": "getMinutes",
+    "मिनट_रखो": "setMinutes",
+    "सेकंड_लो": "getSeconds",
+    "सेकंड_रखो": "setSeconds",
+    "मिलीसेकंड_लो": "getMilliseconds",
+    "मिलीसेकंड_रखो": "setMilliseconds",
+    "समय_लो": "getTime",
+    "समय_रखो": "setTime",
+    "समयक्षेत्र_अंतर": "getTimezoneOffset",
+
+    // RegExp
+    "जाँचो": "test",
+    "मिलान_चलाओ": "exec",
+    "स्रोत": "source",
+    "झंडे": "flags",
+    "अंतिम_सूचकांक": "lastIndex",
+
+    // Reflect
+    "गुण_हटाओ": "deleteProperty",
+    "निर्माण_करो": "construct",
+    "अपनी_कुंजियाँ": "ownKeys",
+
+    // Node.js (continued)
+    "एक्सपोर्ट्स": "exports",
+    "तर्क_सूची": "argv",
+    "परिवेश": "env",
+    "बाहर_निकलो": "exit",
+    "वर्तमान_फ़ोल्डर": "cwd",
+    "अगला_टिक": "nextTick",
+    "सुनो": "on",
+    "एक_बार_सुनो": "once",
+    "घटना_भेजो": "emit",
+    "फ़ाइल_पढ़ो": "readFile",
+    "फ़ाइल_पढ़ो_सिंक": "readFileSync",
+    "फ़ाइल_लिखो": "writeFile",
+    "फ़ाइल_लिखो_सिंक": "writeFileSync",
+    "मौजूद_है_सिंक": "existsSync",
+    "फ़ोल्डर_बनाओ_सिंक": "mkdirSync",
+    "फ़ोल्डर_पढ़ो_सिंक": "readdirSync",
+    "मूल_नाम": "basename",
+    "एक्सटेंशन": "extname",
+    "फ़ोल्डर_नाम": "dirname",
+    "सर्वर_बनाओ": "createServer",
+    "सुनना_शुरू": "listen",
+
+    // Browser / DOM (continued)
+    "घटना_हटाओ": "removeEventListener",
+    "बच्चा_हटाओ": "removeChild",
+    "अंदर_एचटीएमएल": "innerHTML",
+    "टेक्स्ट_सामग्री": "textContent",
+    "क्लास_सूची": "classList",
+    "शैली": "style",
+    "विशेषता_रखो": "setAttribute",
+    "विशेषता_लो": "getAttribute",
+    "डिफ़ॉल्ट_रोको": "preventDefault",
+    "एनिमेशन_फ्रेम": "requestAnimationFrame",
+    "वस्तु_लो": "getItem",
+    "वस्तु_रखो": "setItem",
+    "वस्तु_हटाओ": "removeItem",
 };
 
-const sortedKeywords = Object.keys(hindiToJS).sort((a, b) => b.length - a.length);
+// Devanagari letters with a nukta (ड़, फ़, ज़ ...) can be typed either as one
+// precomposed code point or as base letter + U+093C, and many people drop the
+// nukta entirely. Accept all three spellings for every keyword.
+const NUKTA_BASES = "कखगजडढफय"; // क ख ग ज ड ढ फ य
+
+function spellingVariants(keyword) {
+    const decomposed = keyword.normalize("NFC");
+    const precomposed = decomposed.replace(/([कखगजडढफय])़/g, (_, base) =>
+        String.fromCharCode(0x0958 + NUKTA_BASES.indexOf(base))
+    );
+    const withoutNukta = decomposed.replace(/़/g, "");
+    return [...new Set([keyword, decomposed, precomposed, withoutNukta])];
+}
+
+const keywordLookup = {};
+for (const [keyword, js] of Object.entries(hindiToJS)) {
+    for (const variant of spellingVariants(keyword)) {
+        // an explicitly listed keyword always wins over a generated variant
+        if (!(variant in keywordLookup) || variant === keyword) {
+            keywordLookup[variant] = js;
+        }
+    }
+}
+
+const sortedKeywords = Object.keys(keywordLookup).sort((a, b) => b.length - a.length);
 
 module.exports = {
     hindiToJS,
+    keywordLookup,
     sortedKeywords,
 };
